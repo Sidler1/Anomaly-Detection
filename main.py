@@ -7,8 +7,8 @@ from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import Dense, GaussianNoise
 from tensorflow.python.keras.models import Model
 
-DATA_DIR = os.path.join("E:/PycharmProjects/VMT-AI/data/")
-MODELS_CKPT_DIR = os.path.join("E:/PycharmProjects/VMT-AI/models/vmt.ckpt/")
+DATA_DIR = os.path.join("data/")
+MODELS_CKPT_DIR = os.path.join("models/ai.ckpt/")
 
 
 def build_model(train_set: pd.DataFrame) -> Model:
@@ -52,10 +52,10 @@ if __name__ == '__main__':
                                                      save_best_only=True, verbose=1)
     # tb_callback = tf.keras.callbacks.TensorBoard(log_dir="models/logs", histogram_freq=10, write_graph=True,
     #                                             write_images=True, update_freq="epoch", embeddings_freq=10)
-    X_train, X_test = getdata("test.csv", ["110", "115", "120"])
-    vmt_model = build_model(X_train)
+    X_train, X_test = getdata("train.csv", ["110", "115", "120"])
+    ad_model = build_model(X_train)
     if os.path.exists(MODELS_CKPT_DIR):
-        vmt_model = tf.keras.models.load_model(MODELS_CKPT_DIR)
-    vmt_model.fit(np.array(X_train), np.array(X_train), batch_size=32, verbose=1, epochs=2000, validation_split=0.1,
-                  callbacks=[tf_callback])
-    handle_model_callback(vmt_model)
+        ad_model = tf.keras.models.load_model(MODELS_CKPT_DIR)
+    ad_model.fit(np.array(X_train), np.array(X_train), batch_size=32, verbose=1, epochs=2000, validation_split=0.1,
+                 callbacks=[tf_callback])
+    handle_model_callback(ad_model)

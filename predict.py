@@ -5,7 +5,7 @@ import pandas as pd
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-vmt_model = tf.keras.models.load_model("models/ad-model.h5")
+ad_model = tf.keras.models.load_model("models/ai.ckpt/")
 
 
 def predict(predict_data, model) -> pd.DataFrame():
@@ -22,7 +22,7 @@ def predict(predict_data, model) -> pd.DataFrame():
 @app.route('/', methods=['POST'])
 def index():
     pd.read_csv(request.files['csv']).to_csv("data/" + str(datetime.date.today()) + ".csv", index=False)
-    resp = predict(pd.read_csv("data/" + str(datetime.date.today()) + ".csv"), vmt_model)
+    resp = predict(pd.read_csv("data/" + str(datetime.date.today()) + ".csv"), ad_model)
     resp = resp.drop(['Threshold'], 1)
     return jsonify(resp.to_dict(orient="index"))
 
