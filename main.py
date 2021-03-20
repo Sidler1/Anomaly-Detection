@@ -26,11 +26,11 @@ def build_model(train_set: pd.DataFrame) -> Model:
     return model
 
 
-def getdata(filename: str):
+def getdata(filename: str, columns):
     merged_data = pd.DataFrame()
     msg = pd.read_csv(DATA_DIR + filename)
     merged_data = merged_data.append(msg)
-    merged_data.columns = ["110", "115", "120"]
+    merged_data.columns = columns
     dataset_train = merged_data[3:]
     dataset_test = merged_data[:2]
     x_train = pd.DataFrame(dataset_train,
@@ -52,7 +52,7 @@ if __name__ == '__main__':
                                                      save_best_only=True, verbose=1)
     # tb_callback = tf.keras.callbacks.TensorBoard(log_dir="models/logs", histogram_freq=10, write_graph=True,
     #                                             write_images=True, update_freq="epoch", embeddings_freq=10)
-    X_train, X_test = getdata("test.csv")
+    X_train, X_test = getdata("test.csv", ["110", "115", "120"])
     vmt_model = build_model(X_train)
     if os.path.exists(MODELS_CKPT_DIR):
         vmt_model = tf.keras.models.load_model(MODELS_CKPT_DIR)
