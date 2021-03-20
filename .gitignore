@@ -1,0 +1,6 @@
+/venv/
+/data/*
+/.idea/
+/models/*/
+/models/*.h5
+/predict.csv
