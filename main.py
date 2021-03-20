@@ -43,8 +43,8 @@ def getdata(filename: str, columns):
 
 
 def handle_model_callback(model: Model):
-    model.save('./models/vmt_anomaly.h5')
-    model.save_weights('./models/vmt_anomaly_weights.h5')
+    model.save('./models/ad-model.h5')
+    model.save_weights('./models/ad-model_weights.h5')
 
 
 if __name__ == '__main__':

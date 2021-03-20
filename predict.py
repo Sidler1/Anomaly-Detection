@@ -5,7 +5,7 @@ import pandas as pd
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-vmt_model = tf.keras.models.load_model("models/vmt_anomaly.h5")
+vmt_model = tf.keras.models.load_model("models/ad-model.h5")
 
 
 def predict(predict_data, model) -> pd.DataFrame():
