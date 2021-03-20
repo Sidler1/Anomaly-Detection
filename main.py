@@ -11,15 +11,15 @@ from tensorflow.python.keras.models import Model
 MODELS_CKPT_DIR = os.path.join("models/ai.ckpt/")
 
 
-def build_model(train_set: pd.DataFrame, lr: float) -> Model:
+def build_model(train_set: pd.DataFrame, lr: float, noise: float) -> Model:
     act_func = 'elu'
     encoding_dim = 20
     features = train_set.shape[1]
     inp = Input(shape=(features,))
-    x = GaussianNoise(stddev=0.3)(inp)
+    x = GaussianNoise(stddev=noise)(inp)
     x = Dense(encoding_dim * 2, activation=act_func)(x)
     out = Dense(encoding_dim * 2, activation=act_func)(x)
-    out = Dense(features, activation=act_func)(x)
+    out = Dense(features, activation="selu")(x)
     model = Model(inputs=[inp], outputs=[out])
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr), loss="mae")
     model.summary()
@@ -56,18 +56,21 @@ def parse_arguments():
     parser.add_argument("--verb_train", help="Verbosity for Training", default=0, type=int)
     parser.add_argument("--verb_save", help="Verbosity for Saving", default=0, type=int)
     parser.add_argument("--lr", help="Learning Rate", default=0.001, type=float)
+    parser.add_argument("--noise", help="How much noise is added to the dataset", default=0.1, type=float)
     args = parser.parse_args()
-    return args.save_freq, args.epochs, args.batch_size, args.train_file, args.verb_train, args.verb_save, args.lr
+    return args.save_freq, args.epochs, args.batch_size, args.train_file, args.verb_train, args.verb_save, args.lr, args.noise
 
 
 if __name__ == '__main__':
-    save_freq, epochs, batch_size, train_file, verb_train, verb_save, lr = parse_arguments()
+    np.random.seed(1337)
+    tf.random.set_seed(1337)
+    save_freq, epochs, batch_size, train_file, verb_train, verb_save, lr, noise = parse_arguments()
     tf_callback = tf.keras.callbacks.ModelCheckpoint(MODELS_CKPT_DIR, save_freq=save_freq, monitor="loss",
                                                      save_best_only=True, verbose=verb_save)
     # tb_callback = tf.keras.callbacks.TensorBoard(log_dir="models/logs", histogram_freq=10, write_graph=True,
     #                                             write_images=True, update_freq="epoch", embeddings_freq=10)
     X_train, X_test = getdata(train_file, ["110", "115", "120"])
-    ad_model = build_model(X_train, lr)
+    ad_model = build_model(X_train, lr, noise)
     if os.path.exists(MODELS_CKPT_DIR):
         ad_model = tf.keras.models.load_model(MODELS_CKPT_DIR)
     ad_model.fit(np.array(X_train), np.array(X_train), batch_size=batch_size, verbose=verb_train, epochs=epochs,
