@@ -21,7 +21,7 @@ def build_model(train_set: pd.DataFrame, lr: float) -> Model:
     out = Dense(encoding_dim * 2, activation=act_func)(x)
     out = Dense(features, activation=act_func)(x)
     model = Model(inputs=[inp], outputs=[out])
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.00001), loss="mae")
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr), loss="mae")
     model.summary()
     return model
 
